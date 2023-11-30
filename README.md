@@ -32,3 +32,7 @@ Installation
     
     python script.py
 
+Utilisation Examples:
+Enter hostname(host.domain.xyz): vsphere.domain.com
+Enter your username: vsphereadmin@domain.local
+Enter your password: T00Obv1ou$
