@@ -3,6 +3,7 @@ from pyVim.connect import SmartConnect, Disconnect
 from pyVmomi import vim
 import getpass
 import ssl
+from tqdm import tqdm
 
 # Disable SSL verification
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -52,7 +53,8 @@ header = ["VM Name", "Power State", "Last Power On Task Time", "Last Power Off T
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.DictWriter(file, fieldnames=header)
     writer.writeheader()
-    for vm in vm_list.view:
+    # Progress bar for the VM processing
+    for vm in tqdm(vm_list.view, desc="Building list of VMs"):
         power_state = "POWERED ON" if vm.runtime.powerState == vim.VirtualMachine.PowerState.poweredOn \
             else "POWERED OFF"
         last_power_on_event, last_power_off_event = get_last_power_event(vm)
@@ -65,5 +67,6 @@ with open(csv_file, mode='w', newline='') as file:
                 "%Y-%m-%d %H:%M:%S") if last_power_off_event else "N/A",
         })
 
+print("Export finished. Disconnecting...")
 # Disconnect from the vCenter Server
 Disconnect(service_instance)
