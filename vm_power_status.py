@@ -1,4 +1,5 @@
 import csv
+import os
 from pyVim.connect import SmartConnect, Disconnect
 from pyVmomi import vim
 import getpass
@@ -26,6 +27,13 @@ vm_list = content.viewManager.CreateContainerView(content.rootFolder, [vim.Virtu
 
 # Specify the output CSV file name
 csv_file = 'vm_power_status_list.csv'
+
+# Check if the output file exists and is not empty, create a backup if necessary
+if os.path.exists(csv_file) and os.path.getsize(csv_file) > 0:
+    backup_file = f"{csv_file}.backup"
+    with open(csv_file, 'rb') as src, open(backup_file, 'wb') as dst:
+        dst.write(src.read())
+    print(f"Backup of the original file created: {backup_file}")
 
 
 # Retrieve the last power on/off task for a VM
